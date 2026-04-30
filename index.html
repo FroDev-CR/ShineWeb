@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shine & Bright House Cleaning Services</title>
+  <meta name="description" content="Professional post-construction cleaning, pressure washing, and maintenance services in Charlotte NC, Columbia SC, and Shelby NC.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: '#1E3466',
+            'navy-dark': '#0E1C48',
+            'navy-mid': '#152850',
+            'navy-light': '#2B4A90',
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+
+    /* Before/After Slider */
+    .ba-wrap { position: relative; overflow: hidden; cursor: ew-resize; user-select: none; touch-action: pan-y; }
+    .ba-before { position: absolute; inset: 0; overflow: hidden; }
+    .ba-before img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .ba-after  { position: absolute; inset: 0; }
+    .ba-after  img { width: 100%; height: 100%; object-fit: cover; }
+    .ba-divider { position: absolute; top: 0; height: 100%; width: 3px; background: #fff; z-index: 10; pointer-events: none; }
+    .ba-handle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 44px; height: 44px; background: white; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.35); }
+    .ba-label { position: absolute; top: 12px; padding: 3px 10px; border-radius: 6px;
+      font-size: 11px; font-weight: 700; letter-spacing: .05em; z-index: 11; }
+
+    /* Hero grid pattern */
+    .hero-pattern::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 44px 44px;
+      pointer-events: none;
+    }
+
+    /* Card hover lift */
+    .card-lift { transition: transform .25s ease, box-shadow .25s ease; }
+    .card-lift:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(30,52,102,.12); }
+
+    /* Fade-up on scroll */
+    .fade-up { opacity: 0; transform: translateY(24px); transition: opacity .55s ease, transform .55s ease; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    /* ═══ Animated Gradient Background ═══ */
+    .bg-anim {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(40deg, rgb(10, 19, 48), rgb(14, 28, 72));
+    }
+    .bg-anim .gradients-container {
+      position: absolute;
+      inset: 0;
+      filter: url(#goo) blur(40px);
+      pointer-events: none;
+    }
+    @supports (-webkit-touch-callout: none) {
+      .bg-anim .gradients-container { filter: blur(40px); }
+    }
+    .bg-blob {
+      position: absolute;
+      width: 80%;
+      height: 80%;
+      top: 10%;
+      left: 10%;
+      mix-blend-mode: hard-light;
+      transform-origin: center center;
+      background-repeat: no-repeat;
+    }
+    .bg-blob-1 {
+      background: radial-gradient(circle at center, rgba(60, 130, 255, .85) 0, rgba(60, 130, 255, 0) 50%) no-repeat;
+      animation: moveVertical 30s ease infinite;
+    }
+    .bg-blob-2 {
+      background: radial-gradient(circle at center, rgba(100, 200, 255, .75) 0, rgba(100, 200, 255, 0) 50%) no-repeat;
+      transform-origin: calc(50% - 400px);
+      animation: moveInCircle 20s reverse infinite;
+    }
+    .bg-blob-3 {
+      background: radial-gradient(circle at center, rgba(130, 176, 255, .8) 0, rgba(130, 176, 255, 0) 50%) no-repeat;
+      transform-origin: calc(50% + 400px);
+      animation: moveInCircle 40s linear infinite;
+    }
+    .bg-blob-4 {
+      background: radial-gradient(circle at center, rgba(30, 80, 200, .7) 0, rgba(30, 80, 200, 0) 50%) no-repeat;
+      transform-origin: calc(50% - 200px);
+      animation: moveHorizontal 40s ease infinite;
+      opacity: .75;
+    }
+    .bg-blob-5 {
+      background: radial-gradient(circle at center, rgba(80, 180, 220, .7) 0, rgba(80, 180, 220, 0) 50%) no-repeat;
+      transform-origin: calc(50% - 800px) calc(50% + 800px);
+      animation: moveInCircle 20s ease infinite;
+    }
+    .bg-pointer {
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(140, 200, 255, .7) 0, rgba(140, 200, 255, 0) 50%) no-repeat;
+      mix-blend-mode: hard-light;
+      opacity: .65;
+      transition: transform .15s ease-out;
+      pointer-events: none;
+    }
+    @keyframes moveVertical {
+      0%   { transform: translateY(-50%); }
+      50%  { transform: translateY(50%);  }
+      100% { transform: translateY(-50%); }
+    }
+    @keyframes moveInCircle {
+      0%   { transform: rotate(0deg);   }
+      50%  { transform: rotate(180deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes moveHorizontal {
+      0%   { transform: translateX(-50%) translateY(-10%); }
+      50%  { transform: translateX(50%)  translateY(10%);  }
+      100% { transform: translateX(-50%) translateY(-10%); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .bg-blob, .bg-pointer { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body class="font-sans text-gray-900 antialiased">
+
+<!-- ═══════════════════════ NAVBAR ═══════════════════════ -->
+<nav id="navbar" class="fixed top-0 inset-x-0 z-50 transition-all duration-300" style="background:transparent;">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-36">
+
+      <!-- Logo -->
+      <a href="#home" class="flex items-center gap-2 shrink-0">
+        <img src="assets/image2.png" alt="Shine & Bright House Cleaning Services" class="h-32 w-auto brightness-0 invert drop-shadow-lg">
+      </a>
+
+      <!-- Desktop links -->
+      <div class="hidden md:flex items-center gap-7">
+        <a href="#services"    class="text-white/70 hover:text-white text-sm font-medium transition-colors">Services</a>
+        <a href="#why-us"      class="text-white/70 hover:text-white text-sm font-medium transition-colors">Why Us</a>
+        <a href="#before-after" class="text-white/70 hover:text-white text-sm font-medium transition-colors">Our Work</a>
+        <a href="#areas"       class="text-white/70 hover:text-white text-sm font-medium transition-colors">Areas</a>
+        <a href="#contact"     class="text-white/70 hover:text-white text-sm font-medium transition-colors">Contact</a>
+      </div>
+
+      <!-- Desktop CTAs -->
+      <div class="hidden md:flex items-center gap-4">
+        <a href="tel:9084622897" class="flex items-center gap-2 text-white/70 hover:text-white text-sm font-medium transition-colors">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 7V5z"/></svg>
+          (908) 462-2897
+        </a>
+        <a href="#quote" class="bg-white text-navy px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-blue-50 transition-colors">
+          Get a Quote
+        </a>
+      </div>
+
+      <!-- Mobile hamburger -->
+      <button id="ham-btn" class="md:hidden text-white p-2 -mr-1" aria-label="Open menu">
+        <svg id="ham-icon" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile drawer -->
+  <div id="mobile-nav" class="hidden md:hidden bg-navy-dark border-t border-white/10 px-4 pt-2 pb-4">
+    <a href="#services"     class="block py-3 text-white/70 hover:text-white text-sm border-b border-white/10">Services</a>
+    <a href="#why-us"       class="block py-3 text-white/70 hover:text-white text-sm border-b border-white/10">Why Us</a>
+    <a href="#before-after" class="block py-3 text-white/70 hover:text-white text-sm border-b border-white/10">Our Work</a>
+    <a href="#areas"        class="block py-3 text-white/70 hover:text-white text-sm border-b border-white/10">Areas</a>
+    <a href="#contact"      class="block py-3 text-white/70 hover:text-white text-sm border-b border-white/10">Contact</a>
+    <a href="tel:9084622897" class="block py-3 text-white/70 hover:text-white text-sm border-b border-white/10">(908) 462-2897</a>
+    <a href="#quote" class="mt-3 block text-center bg-white text-navy py-3 rounded-lg text-sm font-bold">Get a Quote</a>
+  </div>
+</nav>
+
+
+<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<section id="home" class="bg-anim relative min-h-screen flex items-center pt-20 hero-pattern">
+
+  <!-- SVG goo filter (defines blur/threshold for blob merging) -->
+  <svg class="absolute w-0 h-0" aria-hidden="true">
+    <defs>
+      <filter id="goo">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"/>
+        <feColorMatrix in="blur" mode="matrix"
+          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="goo"/>
+        <feBlend in="SourceGraphic" in2="goo"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Animated gradient blobs -->
+  <div class="gradients-container">
+    <div class="bg-blob bg-blob-1"></div>
+    <div class="bg-blob bg-blob-2"></div>
+    <div class="bg-blob bg-blob-3"></div>
+    <div class="bg-blob bg-blob-4"></div>
+    <div class="bg-blob bg-blob-5"></div>
+    <div id="bg-pointer" class="bg-pointer"></div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10 w-full">
+    <div class="max-w-3xl">
+
+      <!-- Pill badge -->
+      <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-7">
+        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+        <span class="text-white/85 text-sm font-medium">Serving Charlotte · Columbia · Shelby</span>
+      </div>
+
+      <!-- Headline -->
+      <h1 class="text-4xl sm:text-5xl lg:text-[3.5rem] font-extrabold text-white leading-[1.1] tracking-tight mb-3">
+        Professional Cleaning<br>
+        <span class="text-[#7EB3FF]">You Can Trust</span>
+      </h1>
+      <p class="text-xl text-white/60 font-semibold mb-4">From Construction to Move-In Ready</p>
+      <p class="text-base sm:text-lg text-white/50 mb-10 leading-relaxed max-w-xl">
+        Post-construction cleaning, pressure washing, and maintenance services delivered with precision and reliability.
+      </p>
+
+      <!-- Buttons -->
+      <div class="flex flex-wrap gap-4 mb-16">
+        <a href="#quote" class="inline-flex items-center gap-2 bg-white text-navy px-8 py-4 rounded-xl text-base font-bold shadow-lg hover:bg-blue-50 hover:-translate-y-0.5 transition-all duration-200">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+          </svg>
+          Get a Quote
+        </a>
+        <a href="#before-after" class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/25 text-white px-8 py-4 rounded-xl text-base font-semibold hover:bg-white/20 transition-all duration-200">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.069A1 1 0 0121 8.868v6.264a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+          </svg>
+          View Our Work
+        </a>
+      </div>
+
+      <!-- Stats bar -->
+      <div class="flex flex-wrap items-center gap-6 sm:gap-10">
+        <div>
+          <div class="text-3xl font-extrabold text-white">4+</div>
+          <div class="text-white/45 text-sm mt-0.5">Years Experience</div>
+        </div>
+        <div class="h-10 w-px bg-white/15"></div>
+        <div>
+          <div class="text-3xl font-extrabold text-white">4</div>
+          <div class="text-white/45 text-sm mt-0.5">Major Builders</div>
+        </div>
+        <div class="h-10 w-px bg-white/15"></div>
+        <div>
+          <div class="text-3xl font-extrabold text-white">100%</div>
+          <div class="text-white/45 text-sm mt-0.5">Satisfaction</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wave transition -->
+  <div class="absolute bottom-0 inset-x-0 pointer-events-none" style="line-height:0">
+    <svg viewBox="0 0 1440 56" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="display:block;width:100%">
+      <path d="M0,56 L1440,56 L1440,28 C1080,56 720,0 360,28 C240,36 120,42 0,28 Z" fill="#F8FAFD"/>
+    </svg>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════ SERVICES ═══════════════════════ -->
+<section id="services" class="bg-[#F8FAFD] py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <div class="text-center mb-14 fade-up">
+      <span class="text-navy text-xs font-bold uppercase tracking-widest">What We Do</span>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-2">Our Services</h2>
+      <p class="text-gray-400 mt-3 max-w-md mx-auto text-sm">From rough construction cleans to pristine final touches — we handle every stage.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-7">
+
+      <!-- Post-Construction -->
+      <div class="bg-white rounded-2xl p-8 border border-gray-100 card-lift fade-up group">
+        <div class="w-14 h-14 bg-[#EEF2FF] rounded-2xl flex items-center justify-center mb-6 group-hover:bg-navy transition-colors duration-300">
+          <svg class="w-7 h-7 text-navy group-hover:text-white transition-colors duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Post-Construction Cleaning</h3>
+        <p class="text-gray-400 text-sm leading-relaxed mb-5">Rough cleans, final cleans, and re-cleans. Builder-ready quality on every project.</p>
+        <ul class="space-y-2.5">
+          <li class="flex items-center gap-2 text-sm text-gray-600">
+            <svg class="w-4 h-4 text-navy shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            Rough, Final &amp; Re-cleans
+          </li>
+          <li class="flex items-center gap-2 text-sm text-gray-600">
+            <svg class="w-4 h-4 text-navy shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            Builder-ready quality
+          </li>
+        </ul>
+      </div>
+
+      <!-- Pressure Washing — featured card -->
+      <div class="bg-navy rounded-2xl p-8 shadow-xl card-lift fade-up relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/5 rounded-full pointer-events-none"></div>
+        <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mb-6">
+          <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+          </svg>
+        </div>
+        <div class="inline-block bg-[#7EB3FF]/20 text-[#7EB3FF] text-xs font-semibold px-2.5 py-1 rounded-full mb-3">Popular</div>
+        <h3 class="text-xl font-bold text-white mb-2">Pressure Washing</h3>
+        <p class="text-white/60 text-sm leading-relaxed mb-5">Driveways, siding, patios and more — safe, professional-grade equipment every time.</p>
+        <ul class="space-y-2.5">
+          <li class="flex items-center gap-2 text-sm text-white/80">
+            <svg class="w-4 h-4 text-[#7EB3FF] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            Driveways, siding, patios
+          </li>
+          <li class="flex items-center gap-2 text-sm text-white/80">
+            <svg class="w-4 h-4 text-[#7EB3FF] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            Safe &amp; professional equipment
+          </li>
+        </ul>
+      </div>
+
+      <!-- Maintenance Cleaning -->
+      <div class="bg-white rounded-2xl p-8 border border-gray-100 card-lift fade-up group">
+        <div class="w-14 h-14 bg-[#EEF2FF] rounded-2xl flex items-center justify-center mb-6 group-hover:bg-navy transition-colors duration-300">
+          <svg class="w-7 h-7 text-navy group-hover:text-white transition-colors duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Maintenance Cleaning</h3>
+        <p class="text-gray-400 text-sm leading-relaxed mb-5">Regular cleaning for offices and info centers. Weekly and biweekly schedules.</p>
+        <ul class="space-y-2.5">
+          <li class="flex items-center gap-2 text-sm text-gray-600">
+            <svg class="w-4 h-4 text-navy shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            Offices &amp; info centers
+          </li>
+          <li class="flex items-center gap-2 text-sm text-gray-600">
+            <svg class="w-4 h-4 text-navy shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            Weekly / biweekly service
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════ WHY CHOOSE US ═══════════════════════ -->
+<section id="why-us" class="bg-white py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <div class="text-center mb-14 fade-up">
+      <span class="text-navy text-xs font-bold uppercase tracking-widest">Our Strengths</span>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-2">Why Choose Us</h2>
+      <p class="text-gray-400 mt-3 max-w-md mx-auto text-sm">Built on trust, driven by experience — here's what sets Shine &amp; Bright apart.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+      <!-- Trusted by Builders -->
+      <div class="text-center p-7 rounded-2xl bg-[#F8FAFD] hover:bg-[#EEF2FF] transition-colors duration-300 fade-up">
+        <div class="w-16 h-16 bg-navy rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-md">
+          <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        </div>
+        <h3 class="text-base font-bold text-gray-900 mb-2">Trusted by Builders</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Lennar Homes, LGI Homes,<br>DRB Homes, Ryan Homes</p>
+      </div>
+
+      <!-- 4+ Years -->
+      <div class="text-center p-7 rounded-2xl bg-[#F8FAFD] hover:bg-[#EEF2FF] transition-colors duration-300 fade-up">
+        <div class="w-16 h-16 bg-navy rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-md">
+          <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <h3 class="text-base font-bold text-gray-900 mb-2">4+ Years Experience</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Specialized in construction cleaning since day one</p>
+      </div>
+
+      <!-- Reliable Crews -->
+      <div class="text-center p-7 rounded-2xl bg-[#F8FAFD] hover:bg-[#EEF2FF] transition-colors duration-300 fade-up">
+        <div class="w-16 h-16 bg-navy rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-md">
+          <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </div>
+        <h3 class="text-base font-bold text-gray-900 mb-2">Reliable Crews</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Always on time and ready to deliver exceptional results</p>
+      </div>
+
+      <!-- Quality Guaranteed -->
+      <div class="text-center p-7 rounded-2xl bg-[#F8FAFD] hover:bg-[#EEF2FF] transition-colors duration-300 fade-up">
+        <div class="w-16 h-16 bg-navy rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-md">
+          <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+          </svg>
+        </div>
+        <h3 class="text-base font-bold text-gray-900 mb-2">Quality Guaranteed</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">We don't leave until every detail is perfect</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════ BEFORE & AFTER ═══════════════════════ -->
+<section id="before-after" class="bg-[#F8FAFD] py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <div class="text-center mb-14 fade-up">
+      <span class="text-navy text-xs font-bold uppercase tracking-widest">Results</span>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-2">Before &amp; After</h2>
+      <p class="text-gray-400 mt-3 text-sm">Drag the slider to see the transformation</p>
+    </div>
+
+    <!-- Featured Before/After slider -->
+    <div class="max-w-4xl mx-auto fade-up mb-16">
+      <p class="text-center text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Post-Construction Clean</p>
+      <div class="ba-wrap rounded-2xl overflow-hidden shadow-xl"
+           style="aspect-ratio:16/9"
+           data-before="assets/casas/antes.jpeg"
+           data-after="assets/casas/despu%C3%A9s.jpeg">
+      </div>
+      <p class="text-center text-sm text-gray-400 mt-4">Drag the slider to reveal the transformation</p>
+    </div>
+
+    <!-- Gallery grid -->
+    <div class="fade-up">
+      <p class="text-center text-xs font-semibold text-gray-500 uppercase tracking-widest mb-6">Recent Projects</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div data-gallery-slot class="rounded-2xl overflow-hidden shadow-md aspect-[4/3] group cursor-pointer">
+          <img src="assets/casas/WhatsApp%20Image%202026-04-29%20at%2010.45.33%20AM.jpeg"
+               alt="Modern kitchen with island and stools"
+               class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+               loading="lazy">
+        </div>
+        <div data-gallery-slot class="rounded-2xl overflow-hidden shadow-md aspect-[4/3] group cursor-pointer">
+          <img src="assets/casas/WhatsApp%20Image%202026-04-29%20at%2010.45.34%20AM.jpeg"
+               alt="Open-concept living and kitchen"
+               class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+               loading="lazy">
+        </div>
+        <div data-gallery-slot class="rounded-2xl overflow-hidden shadow-md aspect-[4/3] group cursor-pointer">
+          <img src="assets/casas/WhatsApp%20Image%202026-04-29%20at%2010.45.35%20AM.jpeg"
+               alt="Master bedroom freshly cleaned"
+               class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+               loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════ AREAS WE SERVE ═══════════════════════ -->
+<section id="areas" class="bg-white py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+      <!-- Left: areas list -->
+      <div class="fade-up">
+        <span class="text-navy text-xs font-bold uppercase tracking-widest">Coverage</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-2 mb-4">Areas We Serve</h2>
+        <p class="text-gray-400 text-sm leading-relaxed mb-8">
+          Wherever builders are building in the Carolinas, we're there — delivering consistent, builder-grade results.
+        </p>
+        <div class="space-y-4">
+          <div class="flex items-center gap-4 p-4 rounded-xl bg-[#F8FAFD] border border-gray-100">
+            <div class="w-10 h-10 bg-navy rounded-lg flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="font-semibold text-gray-900 text-sm">Charlotte, NC</div>
+              <div class="text-xs text-gray-400">Primary service area</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 p-4 rounded-xl bg-[#F8FAFD] border border-gray-100">
+            <div class="w-10 h-10 bg-navy rounded-lg flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="font-semibold text-gray-900 text-sm">Columbia, SC</div>
+              <div class="text-xs text-gray-400">Full service coverage</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 p-4 rounded-xl bg-[#F8FAFD] border border-gray-100">
+            <div class="w-10 h-10 bg-navy rounded-lg flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="font-semibold text-gray-900 text-sm">Shelby, NC</div>
+              <div class="text-xs text-gray-400">Full service coverage</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: testimonial card -->
+      <div class="bg-navy rounded-3xl p-10 relative overflow-hidden fade-up">
+        <div class="absolute -top-16 -right-16 w-48 h-48 bg-white/5 rounded-full pointer-events-none"></div>
+        <div class="absolute -bottom-12 -left-12 w-36 h-36 bg-white/5 rounded-full pointer-events-none"></div>
+        <svg class="w-10 h-10 text-[#7EB3FF] mb-6 relative z-10" fill="currentColor" viewBox="0 0 32 32">
+          <path d="M9.333 8C5.985 8 3.333 10.686 3.333 14v10h10V14H5.333c0-2.21 1.79-4 4-4V8zm16 0c-3.348 0-6 2.686-6 6v10h10V14h-8c0-2.21 1.79-4 4-4V8z"/>
+        </svg>
+        <blockquote class="text-white text-lg sm:text-xl font-medium leading-relaxed mb-8 relative z-10">
+          "Reliable, fast, and always deliver high quality work. The cleaning crew we've ever worked with."
+        </blockquote>
+        <div class="relative z-10 flex items-center gap-4">
+          <div class="w-10 h-10 bg-white/15 rounded-full flex items-center justify-center text-white font-bold text-sm">
+            LH
+          </div>
+          <div>
+            <div class="font-semibold text-white text-sm">Builder Partner</div>
+            <div class="text-[#7EB3FF] text-sm">Lennar Homes</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════ QUOTE / CTA ═══════════════════════ -->
+<section id="quote" class="bg-navy py-24 relative overflow-hidden">
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full" style="background:radial-gradient(circle, rgba(255,255,255,.06), transparent 70%)"></div>
+    <div class="absolute -bottom-20 -left-20 w-64 h-64 rounded-full" style="background:radial-gradient(circle, rgba(255,255,255,.04), transparent 70%)"></div>
+    <div class="absolute inset-0 opacity-[.025]" style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:44px 44px;"></div>
+  </div>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 fade-up">
+    <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-4 leading-tight">
+      Ready to Work with a Team<br class="hidden sm:block"> You Can Trust?
+    </h2>
+    <p class="text-blue-200/70 text-lg mb-10">Get in touch today — no job too big or too small.</p>
+    <div class="flex flex-wrap justify-center gap-4">
+      <a href="mailto:shine_brighthousecleaning@yahoo.com"
+         class="inline-flex items-center gap-2 bg-white text-navy px-8 py-4 rounded-xl text-base font-bold shadow-lg hover:bg-blue-50 hover:-translate-y-0.5 transition-all duration-200">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+        Request a Quote
+      </a>
+      <a href="tel:9084622897"
+         class="inline-flex items-center gap-2 bg-white/10 border border-white/25 text-white px-8 py-4 rounded-xl text-base font-semibold hover:bg-white/20 transition-all duration-200">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 7V5z"/>
+        </svg>
+        Call (908) 462-2897
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<footer id="contact" class="bg-navy-dark py-14">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 pb-10 border-b border-white/10">
+
+      <!-- Brand -->
+      <div>
+        <img src="assets/image2.png" alt="Shine & Bright" class="h-12 w-auto brightness-0 invert mb-4">
+        <p class="text-white/40 text-sm leading-relaxed max-w-xs">
+          Professional cleaning services you can trust — from construction to move-in ready.
+        </p>
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <h4 class="text-white font-semibold text-sm mb-4">Contact</h4>
+        <ul class="space-y-3">
+          <li>
+            <a href="mailto:shine_brighthousecleaning@yahoo.com"
+               class="flex items-start gap-3 text-white/50 hover:text-white text-sm transition-colors">
+              <svg class="w-4 h-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              shine_brighthousecleaning@yahoo.com
+            </a>
+          </li>
+          <li>
+            <a href="tel:9084622897"
+               class="flex items-center gap-3 text-white/50 hover:text-white text-sm transition-colors">
+              <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 7V5z"/>
+              </svg>
+              (908) 462-2897
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Links -->
+      <div>
+        <h4 class="text-white font-semibold text-sm mb-4">Company</h4>
+        <ul class="space-y-3">
+          <li><a href="#services" class="text-white/50 hover:text-white text-sm transition-colors">Services</a></li>
+          <li><a href="#areas"    class="text-white/50 hover:text-white text-sm transition-colors">Areas We Serve</a></li>
+          <!--
+            CAREERS LINK
+            This opens the application form modal below.
+            When you have a Google Form URL, you can replace the href with it directly.
+          -->
+          <li><a href="#" id="careers-trigger" class="text-white/50 hover:text-white text-sm transition-colors">Careers</a></li>
+        </ul>
+      </div>
+
+    </div>
+    <div class="pt-6 flex flex-col sm:flex-row justify-between items-center gap-3">
+      <p class="text-white/25 text-xs">© 2025 Shine &amp; Bright House Cleaning Services. All rights reserved.</p>
+      <p class="text-white/25 text-xs">Charlotte · Columbia · Shelby</p>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ═══════════════════════ CAREERS MODAL ═══════════════════════ -->
+<div id="careers-modal" class="fixed inset-0 z-[200] hidden items-center justify-center p-4"
+     style="background:rgba(10,19,48,.75);backdrop-filter:blur(6px);">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[92vh] overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+
+    <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100 sticky top-0 bg-white z-10">
+      <div>
+        <h3 id="modal-title" class="text-lg font-bold text-gray-900" data-i18n="title">Join Our Team</h3>
+        <p class="text-xs text-gray-400 mt-0.5" data-i18n="subtitle">Application form — we'll review and reach out</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <!-- Lang toggle -->
+        <div class="flex bg-gray-100 rounded-lg p-0.5 text-xs font-semibold">
+          <button type="button" id="lang-en" class="px-2.5 py-1 rounded-md bg-white shadow-sm text-navy">EN</button>
+          <button type="button" id="lang-es" class="px-2.5 py-1 rounded-md text-gray-500">ES</button>
+        </div>
+        <button id="modal-close" class="w-9 h-9 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors" aria-label="Close">
+          <svg class="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <form id="careers-form" class="px-6 py-6 space-y-6">
+
+      <!-- ─── Basic Information ─── -->
+      <div>
+        <h4 class="text-sm font-bold text-navy uppercase tracking-wider mb-3" data-i18n="sec_basic">Basic Information</h4>
+        <div class="space-y-4">
+          <div>
+            <label for="cf-name" class="block text-sm font-medium text-gray-700 mb-1.5" data-i18n="name">Full Name <span class="text-red-500">*</span></label>
+            <input id="cf-name" type="text" name="full_name" required autocomplete="name"
+                   class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-navy focus:border-transparent placeholder-gray-300">
+          </div>
+          <div>
+            <label for="cf-phone" class="block text-sm font-medium text-gray-700 mb-1.5" data-i18n="phone">Phone Number <span class="text-red-500">*</span></label>
+            <input id="cf-phone" type="tel" name="phone" required autocomplete="tel"
+                   class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-navy focus:border-transparent placeholder-gray-300"
+                   placeholder="(555) 000-0000">
+          </div>
+          <div>
+            <label for="cf-email" class="block text-sm font-medium text-gray-700 mb-1.5" data-i18n="email">Email Address</label>
+            <input id="cf-email" type="email" name="email" autocomplete="email"
+                   class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-navy focus:border-transparent placeholder-gray-300">
+          </div>
+          <div>
+            <label for="cf-city" class="block text-sm font-medium text-gray-700 mb-1.5" data-i18n="city">City / Area</label>
+            <input id="cf-city" type="text" name="city"
+                   class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-navy focus:border-transparent placeholder-gray-300">
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Work Availability ─── -->
+      <div>
+        <h4 class="text-sm font-bold text-navy uppercase tracking-wider mb-3" data-i18n="sec_avail">Work Availability</h4>
+        <fieldset>
+          <legend class="block text-sm font-medium text-gray-700 mb-2" data-i18n="q_transport">Do you have reliable transportation?</legend>
+          <div class="flex gap-4">
+            <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+              <input type="radio" name="reliable_transport" value="true" class="accent-navy w-4 h-4">
+              <span data-i18n="yes">Yes</span>
+            </label>
+            <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+              <input type="radio" name="reliable_transport" value="false" class="accent-navy w-4 h-4">
+              <span data-i18n="no">No</span>
+            </label>
+          </div>
+        </fieldset>
+      </div>
+
+      <!-- ─── Experience ─── -->
+      <div>
+        <h4 class="text-sm font-bold text-navy uppercase tracking-wider mb-3" data-i18n="sec_exp">Experience</h4>
+        <div class="space-y-4">
+          <fieldset>
+            <legend class="block text-sm font-medium text-gray-700 mb-2" data-i18n="q_exp">Do you have cleaning experience?</legend>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                <input type="radio" name="has_experience" value="true" class="accent-navy w-4 h-4">
+                <span data-i18n="yes">Yes</span>
+              </label>
+              <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                <input type="radio" name="has_experience" value="false" class="accent-navy w-4 h-4">
+                <span data-i18n="no">No</span>
+              </label>
+            </div>
+          </fieldset>
+          <div>
+            <label for="cf-exp-desc" class="block text-sm font-medium text-gray-700 mb-1.5" data-i18n="q_exp_desc">If yes, briefly describe your experience</label>
+            <textarea id="cf-exp-desc" name="experience_desc" rows="3"
+                      class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-navy focus:border-transparent placeholder-gray-300 resize-none"></textarea>
+          </div>
+          <fieldset>
+            <legend class="block text-sm font-medium text-gray-700 mb-2" data-i18n="q_areas">Have you worked in any of the following?</legend>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <label class="flex items-center gap-2 p-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
+                <input type="checkbox" name="work_residential" class="accent-navy w-4 h-4">
+                <span data-i18n="w_res">Residential Cleaning</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
+                <input type="checkbox" name="work_post_construction" class="accent-navy w-4 h-4">
+                <span data-i18n="w_post">Post-Construction</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
+                <input type="checkbox" name="work_commercial" class="accent-navy w-4 h-4">
+                <span data-i18n="w_comm">Commercial Cleaning</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
+                <input type="checkbox" name="work_pressure_washing" class="accent-navy w-4 h-4">
+                <span data-i18n="w_press">Pressure Washing</span>
+              </label>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+
+      <!-- ─── Work Eligibility ─── -->
+      <div>
+        <h4 class="text-sm font-bold text-navy uppercase tracking-wider mb-3" data-i18n="sec_elig">Work Eligibility</h4>
+        <div class="space-y-4">
+          <fieldset>
+            <legend class="block text-sm font-medium text-gray-700 mb-2" data-i18n="q_authorized">Are you legally authorized to work in the U.S.?</legend>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                <input type="radio" name="authorized_us" value="true" class="accent-navy w-4 h-4">
+                <span data-i18n="yes">Yes</span>
+              </label>
+              <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                <input type="radio" name="authorized_us" value="false" class="accent-navy w-4 h-4">
+                <span data-i18n="no">No</span>
+              </label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend class="block text-sm font-medium text-gray-700 mb-2" data-i18n="q_ssn">Do you have an SSN or ITIN number?</legend>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                <input type="radio" name="has_ssn_itin" value="true" class="accent-navy w-4 h-4">
+                <span data-i18n="yes">Yes</span>
+              </label>
+              <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                <input type="radio" name="has_ssn_itin" value="false" class="accent-navy w-4 h-4">
+                <span data-i18n="no">No</span>
+              </label>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+
+      <!-- ─── Final Step ─── -->
+      <div>
+        <h4 class="text-sm font-bold text-navy uppercase tracking-wider mb-3" data-i18n="sec_final">Final Step</h4>
+        <div>
+          <label for="cf-start" class="block text-sm font-medium text-gray-700 mb-1.5" data-i18n="q_start">When can you start?</label>
+          <input id="cf-start" type="date" name="start_date"
+                 class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-navy focus:border-transparent">
+        </div>
+      </div>
+
+      <!-- Success message -->
+      <div id="form-success" class="hidden text-center py-6">
+        <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <svg class="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+        <p class="font-semibold text-gray-900" data-i18n="ok_title">Application submitted!</p>
+        <p class="text-sm text-gray-400 mt-1" data-i18n="ok_msg">We'll be in touch soon.</p>
+      </div>
+
+      <!-- Error message -->
+      <div id="form-error" class="hidden text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3"></div>
+
+      <button type="submit" id="form-submit"
+              class="w-full bg-navy text-white py-3.5 rounded-xl font-semibold text-sm hover:bg-navy-mid transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+        <span data-i18n="submit">Submit Application</span>
+      </button>
+    </form>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════ SCRIPTS ═══════════════════════ -->
+<script>
+  // ── Hero pointer-follow blob ─────────────────────────────
+  (function() {
+    const pointer = document.getElementById('bg-pointer');
+    const hero    = document.getElementById('home');
+    if (!pointer || !hero) return;
+    let curX = 0, curY = 0, tgX = 0, tgY = 0;
+    function tick() {
+      curX += (tgX - curX) / 20;
+      curY += (tgY - curY) / 20;
+      pointer.style.transform = `translate(${Math.round(curX)}px, ${Math.round(curY)}px)`;
+      requestAnimationFrame(tick);
+    }
+    hero.addEventListener('mousemove', e => {
+      const r = hero.getBoundingClientRect();
+      tgX = e.clientX - r.left;
+      tgY = e.clientY - r.top;
+    });
+    requestAnimationFrame(tick);
+  })();
+
+  // ── Mobile nav ──────────────────────────────────────────
+  const hamBtn   = document.getElementById('ham-btn');
+  const mobileNav = document.getElementById('mobile-nav');
+  hamBtn.addEventListener('click', () => mobileNav.classList.toggle('hidden'));
+  mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileNav.classList.add('hidden')));
+
+  // ── Navbar transparent → navy on scroll ──────────────────
+  window.addEventListener('scroll', () => {
+    const nav = document.getElementById('navbar');
+    if (window.scrollY > 40) {
+      nav.style.background = 'rgba(14,28,72,.92)';
+      nav.style.backdropFilter = 'blur(14px)';
+      nav.style.boxShadow = '0 4px 24px rgba(0,0,0,.35)';
+    } else {
+      nav.style.background = 'transparent';
+      nav.style.backdropFilter = 'none';
+      nav.style.boxShadow = 'none';
+    }
+  }, { passive: true });
+
+  // ── Scroll fade-up ───────────────────────────────────────
+  const fadeEls = document.querySelectorAll('.fade-up');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  fadeEls.forEach(el => observer.observe(el));
+
+  // ── Before/After Sliders ─────────────────────────────────
+  document.querySelectorAll('.ba-wrap').forEach(wrap => {
+    const beforeSrc = wrap.dataset.before;
+    const afterSrc  = wrap.dataset.after;
+
+    // Build DOM
+    const afterDiv = document.createElement('div');
+    afterDiv.className = 'ba-after';
+    const afterImg = new Image(); afterImg.src = afterSrc; afterImg.alt = 'After'; afterDiv.appendChild(afterImg);
+
+    const beforeDiv = document.createElement('div');
+    beforeDiv.className = 'ba-before';
+    beforeDiv.style.width = '50%';
+    const beforeImg = new Image(); beforeImg.src = beforeSrc; beforeImg.alt = 'Before'; beforeDiv.appendChild(beforeImg);
+
+    const divider = document.createElement('div');
+    divider.className = 'ba-divider';
+    divider.style.left = '50%';
+    const handle = document.createElement('div');
+    handle.className = 'ba-handle';
+    handle.innerHTML = '<svg width="20" height="20" fill="none" viewBox="0 0 20 20"><path d="M7 5L2 10L7 15M13 5L18 10L13 15" stroke="#1E3466" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    divider.appendChild(handle);
+
+    const lblBefore = document.createElement('div');
+    lblBefore.className = 'ba-label'; lblBefore.style.left = '12px';
+    lblBefore.style.cssText += ';background:rgba(0,0,0,.55);color:#fff;';
+    lblBefore.textContent = 'BEFORE';
+
+    const lblAfter = document.createElement('div');
+    lblAfter.className = 'ba-label'; lblAfter.style.right = '12px';
+    lblAfter.style.cssText += ';background:#1E3466;color:#fff;';
+    lblAfter.textContent = 'AFTER';
+
+    wrap.appendChild(afterDiv);
+    wrap.appendChild(beforeDiv);
+    wrap.appendChild(divider);
+    wrap.appendChild(lblBefore);
+    wrap.appendChild(lblAfter);
+
+    // Ensure before-image always fills the full container width
+    function syncImgWidth() {
+      beforeImg.style.width = wrap.offsetWidth + 'px';
+    }
+    syncImgWidth();
+    window.addEventListener('resize', syncImgWidth, { passive: true });
+
+    // Drag logic
+    let dragging = false;
+    function move(clientX) {
+      const rect = wrap.getBoundingClientRect();
+      let p = Math.min(Math.max((clientX - rect.left) / rect.width, 0.02), 0.98);
+      const pct = p * 100 + '%';
+      beforeDiv.style.width = pct;
+      divider.style.left    = pct;
+    }
+    wrap.addEventListener('mousedown',  e => { dragging = true; move(e.clientX); e.preventDefault(); });
+    wrap.addEventListener('touchstart', e => { dragging = true; move(e.touches[0].clientX); }, { passive: true });
+    document.addEventListener('mousemove',  e => { if (dragging) move(e.clientX); });
+    document.addEventListener('touchmove',  e => { if (dragging) move(e.touches[0].clientX); }, { passive: true });
+    document.addEventListener('mouseup',  () => dragging = false);
+    document.addEventListener('touchend', () => dragging = false);
+  });
+
+  // ── Supabase client ──────────────────────────────────────
+  const sb = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
+
+  // ── Featured gallery: fetch from DB, fall back to static photos ──
+  (async function loadFeatured() {
+    const slots = document.querySelectorAll('[data-gallery-slot]');
+    if (!slots.length) return;
+    try {
+      const { data, error } = await sb
+        .from('gallery')
+        .select('storage_path, caption')
+        .eq('featured', true)
+        .order('sort_order', { ascending: true })
+        .limit(3);
+      if (error) throw error;
+      if (!data || !data.length) return; // keep static fallback
+      data.forEach((row, i) => {
+        const slot = slots[i];
+        if (!slot) return;
+        const { data: pub } = sb.storage.from(window.GALLERY_BUCKET).getPublicUrl(row.storage_path);
+        const img = slot.querySelector('img');
+        if (img && pub?.publicUrl) {
+          img.src = pub.publicUrl;
+          if (row.caption) img.alt = row.caption;
+        }
+      });
+    } catch (e) {
+      console.warn('Gallery fetch failed, keeping static:', e);
+    }
+  })();
+
+  // ── Careers Modal ────────────────────────────────────────
+  const modal      = document.getElementById('careers-modal');
+  const trigger    = document.getElementById('careers-trigger');
+  const closeBtn   = document.getElementById('modal-close');
+  const form       = document.getElementById('careers-form');
+  const successMsg = document.getElementById('form-success');
+  const errorMsg   = document.getElementById('form-error');
+  const submitBtn  = document.getElementById('form-submit');
+
+  function openModal()  { modal.classList.remove('hidden'); modal.classList.add('flex'); document.body.style.overflow = 'hidden'; }
+  function closeModal() { modal.classList.add('hidden');    modal.classList.remove('flex'); document.body.style.overflow = ''; }
+
+  trigger.addEventListener('click',  e => { e.preventDefault(); openModal(); });
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  // ── Bilingual labels ─────────────────────────────────────
+  const I18N = {
+    en: {
+      title: 'Join Our Team',
+      subtitle: "Application form — we'll review and reach out",
+      sec_basic: 'Basic Information',
+      name: 'Full Name *',
+      phone: 'Phone Number *',
+      email: 'Email Address',
+      city: 'City / Area',
+      sec_avail: 'Work Availability',
+      q_transport: 'Do you have reliable transportation?',
+      yes: 'Yes', no: 'No',
+      sec_exp: 'Experience',
+      q_exp: 'Do you have cleaning experience?',
+      q_exp_desc: 'If yes, briefly describe your experience',
+      q_areas: 'Have you worked in any of the following?',
+      w_res: 'Residential Cleaning',
+      w_post: 'Post-Construction',
+      w_comm: 'Commercial Cleaning',
+      w_press: 'Pressure Washing',
+      sec_elig: 'Work Eligibility',
+      q_authorized: 'Are you legally authorized to work in the U.S.?',
+      q_ssn: 'Do you have an SSN or ITIN number?',
+      sec_final: 'Final Step',
+      q_start: 'When can you start?',
+      submit: 'Submit Application',
+      ok_title: 'Application submitted!',
+      ok_msg: "We'll be in touch soon.",
+      err: 'Something went wrong. Please try again or call (908) 462-2897.'
+    },
+    es: {
+      title: 'Únete a Nuestro Equipo',
+      subtitle: 'Formulario de aplicación — revisaremos y te contactaremos',
+      sec_basic: 'Información Básica',
+      name: 'Nombre Completo *',
+      phone: 'Número de Teléfono *',
+      email: 'Correo Electrónico',
+      city: 'Ciudad / Área',
+      sec_avail: 'Disponibilidad de Trabajo',
+      q_transport: '¿Cuenta con transporte confiable?',
+      yes: 'Sí', no: 'No',
+      sec_exp: 'Experiencia',
+      q_exp: '¿Tiene experiencia en limpieza?',
+      q_exp_desc: 'Si su respuesta es sí, describa brevemente su experiencia',
+      q_areas: '¿Ha trabajado en alguna de las siguientes áreas?',
+      w_res: 'Limpieza Residencial',
+      w_post: 'Limpieza Post-Construcción',
+      w_comm: 'Limpieza Comercial',
+      w_press: 'Lavado a Presión',
+      sec_elig: 'Elegibilidad para Trabajar',
+      q_authorized: '¿Está autorizado(a) legalmente para trabajar en los EE.UU.?',
+      q_ssn: '¿Cuenta con número de SSN o ITIN?',
+      sec_final: 'Paso Final',
+      q_start: '¿Cuándo puede empezar?',
+      submit: 'Enviar Aplicación',
+      ok_title: '¡Aplicación enviada!',
+      ok_msg: 'Nos pondremos en contacto pronto.',
+      err: 'Algo salió mal. Intente de nuevo o llame al (908) 462-2897.'
+    }
+  };
+  let curLang = 'en';
+  function setLang(lang) {
+    curLang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (I18N[lang][key]) el.textContent = I18N[lang][key];
+    });
+    const en = document.getElementById('lang-en'), es = document.getElementById('lang-es');
+    if (lang === 'en') {
+      en.classList.add('bg-white','shadow-sm','text-navy'); en.classList.remove('text-gray-500');
+      es.classList.remove('bg-white','shadow-sm','text-navy'); es.classList.add('text-gray-500');
+    } else {
+      es.classList.add('bg-white','shadow-sm','text-navy'); es.classList.remove('text-gray-500');
+      en.classList.remove('bg-white','shadow-sm','text-navy'); en.classList.add('text-gray-500');
+    }
+  }
+  document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
+  document.getElementById('lang-es').addEventListener('click', () => setLang('es'));
+
+  // ── Submit application → Supabase ────────────────────────
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    errorMsg.classList.add('hidden');
+    submitBtn.disabled = true;
+    const submitSpan = submitBtn.querySelector('span');
+    const originalText = submitSpan.textContent;
+    submitSpan.textContent = curLang === 'es' ? 'Enviando…' : 'Sending…';
+
+    const fd = new FormData(form);
+    const payload = {
+      full_name:              (fd.get('full_name') || '').trim(),
+      phone:                  (fd.get('phone') || '').trim(),
+      email:                  (fd.get('email') || '').trim() || null,
+      city:                   (fd.get('city')  || '').trim() || null,
+      reliable_transport:     fd.get('reliable_transport') === null ? null : fd.get('reliable_transport') === 'true',
+      has_experience:         fd.get('has_experience')     === null ? null : fd.get('has_experience')     === 'true',
+      experience_desc:        (fd.get('experience_desc') || '').trim() || null,
+      work_residential:       fd.get('work_residential') === 'on',
+      work_post_construction: fd.get('work_post_construction') === 'on',
+      work_commercial:        fd.get('work_commercial') === 'on',
+      work_pressure_washing:  fd.get('work_pressure_washing') === 'on',
+      authorized_us:          fd.get('authorized_us') === null ? null : fd.get('authorized_us') === 'true',
+      has_ssn_itin:           fd.get('has_ssn_itin')  === null ? null : fd.get('has_ssn_itin')  === 'true',
+      start_date:             fd.get('start_date') || null
+    };
+
+    try {
+      const { error } = await sb.from('applications').insert(payload);
+      if (error) throw error;
+      form.querySelectorAll('input,textarea,button[type=submit],fieldset,h4,div.space-y-4').forEach(el => {
+        if (!el.closest('#form-success')) el.classList.add('hidden');
+      });
+      // Hide section wrappers
+      form.querySelectorAll(':scope > div').forEach(el => {
+        if (el.id !== 'form-success') el.classList.add('hidden');
+      });
+      successMsg.classList.remove('hidden');
+    } catch (err) {
+      console.error(err);
+      errorMsg.textContent = I18N[curLang].err;
+      errorMsg.classList.remove('hidden');
+      submitBtn.disabled = false;
+      submitSpan.textContent = originalText;
+    }
+  });
+</script>
+</body>
+</html>

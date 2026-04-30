@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin · Shine &amp; Bright</title>
+<meta name="robots" content="noindex,nofollow" />
+<link rel="icon" href="assets/image2.png" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<style>
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background:#f4f6fb; }
+  .navy { color:#1E3466 }
+  .bg-navy { background:#1E3466 }
+  .btn-primary { background:#1E3466; color:#fff; transition:.15s }
+  .btn-primary:hover { background:#152652 }
+  .btn-primary:disabled { opacity:.5; cursor:not-allowed }
+  .badge { display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; text-transform:uppercase; letter-spacing:.5px }
+  .badge-new { background:#dbeafe; color:#1d4ed8 }
+  .badge-reviewed { background:#fef3c7; color:#a16207 }
+  .badge-hired { background:#dcfce7; color:#15803d }
+  .badge-rejected { background:#fee2e2; color:#b91c1c }
+  .tab-active { border-color:#fff; color:#fff; }
+  .tab-inactive { border-color:transparent; color:rgba(255,255,255,.6); }
+  .tab-inactive:hover { color:#fff; }
+  .toast { position:fixed; bottom:20px; right:20px; background:#1E3466; color:#fff; padding:12px 18px; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.15); z-index:50; opacity:0; transform:translateY(8px); transition:.2s; }
+  .toast.show { opacity:1; transform:translateY(0); }
+  .toast.err { background:#b91c1c; }
+  details > summary { list-style:none; cursor:pointer; }
+  details > summary::-webkit-details-marker { display:none; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- ═══════════════════ LOGIN ═══════════════════ -->
+<div id="login-view" class="hidden min-h-screen items-center justify-center px-4">
+  <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
+    <div class="flex items-center justify-center mb-6">
+      <img src="assets/image2.png" alt="Logo" class="h-20 w-auto" />
+    </div>
+    <h1 class="text-2xl font-extrabold navy text-center">Admin Login</h1>
+    <p class="text-center text-sm text-gray-500 mt-1 mb-6">Shine &amp; Bright internal panel</p>
+    <form id="login-form" class="space-y-4">
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+        <input type="email" name="email" required autocomplete="email"
+               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none" />
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
+        <input type="password" name="password" required autocomplete="current-password"
+               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none" />
+      </div>
+      <p id="login-error" class="text-sm text-red-600 hidden"></p>
+      <button type="submit" class="btn-primary w-full py-2.5 rounded-lg font-bold">Sign in</button>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════════ DASHBOARD ═══════════════════ -->
+<div id="dash-view" class="hidden">
+  <header class="bg-navy text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="assets/image2.png" alt="Logo" class="h-10 w-auto brightness-0 invert" />
+        <div>
+          <p class="text-xs uppercase tracking-widest opacity-70">Admin Panel</p>
+          <h1 class="text-lg font-bold">Shine &amp; Bright</h1>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <span id="user-email" class="text-sm opacity-80 hidden sm:inline"></span>
+        <button id="logout-btn" class="text-sm bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg">Logout</button>
+      </div>
+    </div>
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex gap-6 border-t border-white/10">
+      <button data-tab="apps" class="tab-btn py-3 border-b-2 font-semibold text-sm">Applications</button>
+      <button data-tab="photos" class="tab-btn py-3 border-b-2 font-semibold text-sm">Photo Gallery</button>
+    </nav>
+  </header>
+
+  <!-- ───── Applications Tab ───── -->
+  <main id="tab-apps" class="tab-pane max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+      <h2 class="text-2xl font-extrabold navy">Job Applications</h2>
+      <div class="flex flex-wrap gap-2">
+        <select id="filter-status" class="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white">
+          <option value="">All statuses</option>
+          <option value="new">New</option>
+          <option value="reviewed">Reviewed</option>
+          <option value="hired">Hired</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <input id="filter-search" type="text" placeholder="Search name / email / phone..."
+               class="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white w-64" />
+        <button id="refresh-apps" class="btn-primary px-4 py-2 rounded-lg text-sm font-semibold">Refresh</button>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 text-left text-xs uppercase tracking-wider text-gray-500">
+            <tr>
+              <th class="px-4 py-3">Date</th>
+              <th class="px-4 py-3">Name</th>
+              <th class="px-4 py-3">Phone</th>
+              <th class="px-4 py-3">City</th>
+              <th class="px-4 py-3">Status</th>
+              <th class="px-4 py-3"></th>
+            </tr>
+          </thead>
+          <tbody id="apps-tbody" class="divide-y divide-gray-100"></tbody>
+        </table>
+      </div>
+      <p id="apps-empty" class="hidden text-center text-gray-500 py-12">No applications match.</p>
+    </div>
+  </main>
+
+  <!-- ───── Photos Tab ───── -->
+  <main id="tab-photos" class="tab-pane hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+      <div>
+        <h2 class="text-2xl font-extrabold navy">Photo Gallery</h2>
+        <p class="text-sm text-gray-500 mt-1">Pick up to <strong>3 featured photos</strong> to show on the homepage.</p>
+      </div>
+      <label class="btn-primary px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer">
+        <input id="upload-input" type="file" accept="image/*" multiple class="hidden" />
+        Upload photos
+      </label>
+    </div>
+
+    <div id="upload-progress" class="hidden mb-4 text-sm text-gray-600"></div>
+
+    <div id="photos-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+    <p id="photos-empty" class="hidden text-center text-gray-500 py-12">No photos yet. Upload some to get started.</p>
+  </main>
+</div>
+
+<!-- ───── Application detail modal ───── -->
+<div id="app-modal" class="hidden fixed inset-0 z-40 bg-black/50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
+      <h3 class="text-lg font-bold navy">Application detail</h3>
+      <button id="modal-close" class="text-gray-500 hover:text-gray-900 text-2xl leading-none">&times;</button>
+    </div>
+    <div id="modal-body" class="p-6 space-y-4"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const sb = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
+const $  = (s, root=document) => root.querySelector(s);
+const $$ = (s, root=document) => Array.from(root.querySelectorAll(s));
+
+// ── Toast ─────────────────────────────────────
+function toast(msg, isError=false) {
+  const el = $('#toast');
+  el.textContent = msg;
+  el.classList.toggle('err', isError);
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+// ── Auth gate ─────────────────────────────────
+async function checkSession() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) showDash(session.user);
+  else showLogin();
+}
+function showLogin() {
+  $('#dash-view').classList.add('hidden');
+  $('#login-view').classList.remove('hidden');
+  $('#login-view').classList.add('flex');
+}
+function showDash(user) {
+  $('#login-view').classList.add('hidden');
+  $('#login-view').classList.remove('flex');
+  $('#dash-view').classList.remove('hidden');
+  $('#user-email').textContent = user.email;
+  loadApps();
+  loadPhotos();
+}
+
+$('#login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const errEl = $('#login-error');
+  errEl.classList.add('hidden');
+  const btn = e.target.querySelector('button[type=submit]');
+  btn.disabled = true; btn.textContent = 'Signing in...';
+  const { data, error } = await sb.auth.signInWithPassword({
+    email: fd.get('email'),
+    password: fd.get('password'),
+  });
+  btn.disabled = false; btn.textContent = 'Sign in';
+  if (error) {
+    errEl.textContent = error.message;
+    errEl.classList.remove('hidden');
+    return;
+  }
+  showDash(data.user);
+});
+
+$('#logout-btn').addEventListener('click', async () => {
+  await sb.auth.signOut();
+  showLogin();
+});
+
+// ── Tabs ──────────────────────────────────────
+$$('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.tab;
+    $$('.tab-btn').forEach(b => {
+      const active = b.dataset.tab === target;
+      b.classList.toggle('tab-active', active);
+      b.classList.toggle('tab-inactive', !active);
+      b.classList.toggle('text-white', !active);
+    });
+    $$('.tab-pane').forEach(p => p.classList.add('hidden'));
+    $(`#tab-${target}`).classList.remove('hidden');
+  });
+});
+// init tab styling: white text in nav for inactive
+$$('.tab-btn').forEach((b, i) => {
+  if (i === 0) b.classList.add('tab-active', 'bg-white', 'rounded-t-lg', 'px-4');
+  else b.classList.add('tab-inactive', 'text-white', 'px-4');
+});
+
+// ═══════════════════ APPLICATIONS ═══════════════════
+let appsCache = [];
+
+async function loadApps() {
+  const { data, error } = await sb
+    .from('applications')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) { toast('Load failed: ' + error.message, true); return; }
+  appsCache = data || [];
+  renderApps();
+}
+function renderApps() {
+  const status = $('#filter-status').value;
+  const q = $('#filter-search').value.trim().toLowerCase();
+  const rows = appsCache.filter(a => {
+    if (status && a.status !== status) return false;
+    if (q) {
+      const blob = `${a.full_name} ${a.email||''} ${a.phone||''} ${a.city||''}`.toLowerCase();
+      if (!blob.includes(q)) return false;
+    }
+    return true;
+  });
+  const tbody = $('#apps-tbody');
+  tbody.innerHTML = '';
+  $('#apps-empty').classList.toggle('hidden', rows.length > 0);
+  rows.forEach(a => {
+    const tr = document.createElement('tr');
+    tr.className = 'hover:bg-gray-50 cursor-pointer';
+    const date = new Date(a.created_at).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    tr.innerHTML = `
+      <td class="px-4 py-3 text-gray-600">${date}</td>
+      <td class="px-4 py-3 font-semibold">${escapeHtml(a.full_name)}</td>
+      <td class="px-4 py-3">${escapeHtml(a.phone||'')}</td>
+      <td class="px-4 py-3">${escapeHtml(a.city||'')}</td>
+      <td class="px-4 py-3"><span class="badge badge-${a.status}">${a.status}</span></td>
+      <td class="px-4 py-3 text-right text-blue-700 font-semibold">View &rarr;</td>
+    `;
+    tr.addEventListener('click', () => openAppModal(a));
+    tbody.appendChild(tr);
+  });
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+$('#filter-status').addEventListener('change', renderApps);
+$('#filter-search').addEventListener('input', renderApps);
+$('#refresh-apps').addEventListener('click', loadApps);
+
+function openAppModal(a) {
+  const yesno = (v) => v === true ? '<span class="text-green-700 font-semibold">Yes</span>' : v === false ? '<span class="text-red-700 font-semibold">No</span>' : '<span class="text-gray-400">—</span>';
+  const areas = [
+    a.work_residential && 'Residential',
+    a.work_post_construction && 'Post-construction',
+    a.work_commercial && 'Commercial',
+    a.work_pressure_washing && 'Pressure washing',
+  ].filter(Boolean).join(', ') || '<span class="text-gray-400">—</span>';
+
+  $('#modal-body').innerHTML = `
+    <div class="grid grid-cols-2 gap-4 text-sm">
+      <div><p class="text-xs uppercase text-gray-500">Name</p><p class="font-semibold">${escapeHtml(a.full_name)}</p></div>
+      <div><p class="text-xs uppercase text-gray-500">Phone</p><p class="font-semibold">${escapeHtml(a.phone||'')}</p></div>
+      <div><p class="text-xs uppercase text-gray-500">Email</p><p class="font-semibold">${escapeHtml(a.email||'—')}</p></div>
+      <div><p class="text-xs uppercase text-gray-500">City</p><p class="font-semibold">${escapeHtml(a.city||'—')}</p></div>
+      <div><p class="text-xs uppercase text-gray-500">Reliable transport</p><p>${yesno(a.reliable_transport)}</p></div>
+      <div><p class="text-xs uppercase text-gray-500">Has experience</p><p>${yesno(a.has_experience)}</p></div>
+      <div><p class="text-xs uppercase text-gray-500">Authorized to work in US</p><p>${yesno(a.authorized_us)}</p></div>
+      <div><p class="text-xs uppercase text-gray-500">SSN / ITIN</p><p>${yesno(a.has_ssn_itin)}</p></div>
+      <div><p class="text-xs uppercase text-gray-500">Start date</p><p class="font-semibold">${a.start_date || '—'}</p></div>
+      <div><p class="text-xs uppercase text-gray-500">Submitted</p><p class="font-semibold">${new Date(a.created_at).toLocaleString()}</p></div>
+    </div>
+    <div>
+      <p class="text-xs uppercase text-gray-500 mb-1">Work areas</p>
+      <p class="text-sm">${areas}</p>
+    </div>
+    ${a.experience_desc ? `
+      <div>
+        <p class="text-xs uppercase text-gray-500 mb-1">Experience description</p>
+        <p class="text-sm bg-gray-50 rounded-lg p-3 whitespace-pre-wrap">${escapeHtml(a.experience_desc)}</p>
+      </div>` : ''}
+
+    <div class="border-t pt-4 space-y-3">
+      <div>
+        <label class="block text-xs uppercase text-gray-500 mb-1">Status</label>
+        <select id="m-status" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+          <option value="new">New</option>
+          <option value="reviewed">Reviewed</option>
+          <option value="hired">Hired</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs uppercase text-gray-500 mb-1">Notes</label>
+        <textarea id="m-notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"></textarea>
+      </div>
+      <div class="flex gap-2 justify-end">
+        <button id="m-delete" class="px-4 py-2 rounded-lg text-sm font-semibold text-red-700 hover:bg-red-50">Delete</button>
+        <button id="m-save" class="btn-primary px-4 py-2 rounded-lg text-sm font-semibold">Save</button>
+      </div>
+    </div>
+  `;
+  $('#m-status').value = a.status || 'new';
+  $('#m-notes').value  = a.notes || '';
+  $('#app-modal').classList.remove('hidden');
+
+  $('#m-save').onclick = async () => {
+    const { error } = await sb.from('applications').update({
+      status: $('#m-status').value,
+      notes:  $('#m-notes').value || null,
+    }).eq('id', a.id);
+    if (error) return toast('Save failed: ' + error.message, true);
+    toast('Saved');
+    closeModal();
+    loadApps();
+  };
+  $('#m-delete').onclick = async () => {
+    if (!confirm('Delete this application? This cannot be undone.')) return;
+    const { error } = await sb.from('applications').delete().eq('id', a.id);
+    if (error) return toast('Delete failed: ' + error.message, true);
+    toast('Deleted');
+    closeModal();
+    loadApps();
+  };
+}
+function closeModal() { $('#app-modal').classList.add('hidden'); }
+$('#modal-close').addEventListener('click', closeModal);
+$('#app-modal').addEventListener('click', (e) => { if (e.target.id === 'app-modal') closeModal(); });
+
+// ═══════════════════ PHOTOS ═══════════════════
+let photosCache = [];
+
+async function loadPhotos() {
+  const { data, error } = await sb
+    .from('gallery')
+    .select('*')
+    .order('featured', { ascending: false })
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: false });
+  if (error) { toast('Photos load failed: ' + error.message, true); return; }
+  photosCache = data || [];
+  renderPhotos();
+}
+function publicUrl(path) {
+  return sb.storage.from(window.GALLERY_BUCKET).getPublicUrl(path).data.publicUrl;
+}
+function renderPhotos() {
+  const grid = $('#photos-grid');
+  grid.innerHTML = '';
+  $('#photos-empty').classList.toggle('hidden', photosCache.length > 0);
+  const featuredCount = photosCache.filter(p => p.featured).length;
+  photosCache.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'bg-white rounded-xl shadow-sm overflow-hidden flex flex-col';
+    card.innerHTML = `
+      <div class="aspect-[4/3] bg-gray-100 overflow-hidden">
+        <img src="${publicUrl(p.storage_path)}" alt="${escapeHtml(p.caption||'')}" class="w-full h-full object-cover" loading="lazy" />
+      </div>
+      <div class="p-3 flex flex-col gap-2 flex-1">
+        <input data-id="${p.id}" data-field="caption" value="${escapeHtml(p.caption||'')}" placeholder="Caption (optional)"
+               class="w-full px-2 py-1.5 border border-gray-200 rounded text-xs" />
+        <div class="flex items-center gap-2">
+          <input data-id="${p.id}" data-field="sort_order" type="number" value="${p.sort_order||0}" title="Sort order"
+                 class="w-16 px-2 py-1.5 border border-gray-200 rounded text-xs" />
+          <label class="flex items-center gap-1 text-xs font-semibold cursor-pointer ${p.featured ? 'text-green-700' : 'text-gray-500'}">
+            <input data-id="${p.id}" data-field="featured" type="checkbox" ${p.featured ? 'checked' : ''} />
+            Featured
+          </label>
+          <button data-del="${p.id}" data-path="${escapeHtml(p.storage_path)}"
+                  class="ml-auto text-xs font-semibold text-red-600 hover:text-red-800">Delete</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  // wire field listeners
+  $$('#photos-grid input[data-field]').forEach(input => {
+    input.addEventListener('change', async (e) => {
+      const id = +e.target.dataset.id;
+      const field = e.target.dataset.field;
+      let value;
+      if (field === 'featured') {
+        value = e.target.checked;
+        if (value) {
+          const cur = photosCache.filter(p => p.featured).length;
+          if (cur >= 3) {
+            e.target.checked = false;
+            return toast('Max 3 featured photos. Unselect one first.', true);
+          }
+        }
+      } else if (field === 'sort_order') {
+        value = parseInt(e.target.value, 10) || 0;
+      } else {
+        value = e.target.value || null;
+      }
+      const { error } = await sb.from('gallery').update({ [field]: value }).eq('id', id);
+      if (error) return toast('Update failed: ' + error.message, true);
+      const row = photosCache.find(p => p.id === id);
+      if (row) row[field] = value;
+      if (field === 'featured' || field === 'sort_order') renderPhotos();
+    });
+  });
+
+  $$('#photos-grid button[data-del]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = +btn.dataset.del;
+      const path = btn.dataset.path;
+      if (!confirm('Delete this photo?')) return;
+      const { error: e1 } = await sb.storage.from(window.GALLERY_BUCKET).remove([path]);
+      if (e1) console.warn('Storage delete:', e1.message);
+      const { error: e2 } = await sb.from('gallery').delete().eq('id', id);
+      if (e2) return toast('Delete failed: ' + e2.message, true);
+      toast('Deleted');
+      loadPhotos();
+    });
+  });
+}
+
+$('#upload-input').addEventListener('change', async (e) => {
+  const files = Array.from(e.target.files || []);
+  if (!files.length) return;
+  const prog = $('#upload-progress');
+  prog.classList.remove('hidden');
+  let done = 0;
+  for (const file of files) {
+    prog.textContent = `Uploading ${done+1}/${files.length}: ${file.name}...`;
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+    const { error: upErr } = await sb.storage.from(window.GALLERY_BUCKET).upload(path, file, {
+      cacheControl: '3600', upsert: false, contentType: file.type,
+    });
+    if (upErr) { toast(`Upload failed: ${upErr.message}`, true); continue; }
+    const { error: insErr } = await sb.from('gallery').insert({
+      storage_path: path, caption: null, featured: false, sort_order: 0,
+    });
+    if (insErr) toast(`DB insert failed: ${insErr.message}`, true);
+    done++;
+  }
+  prog.textContent = `Uploaded ${done}/${files.length}.`;
+  e.target.value = '';
+  setTimeout(() => prog.classList.add('hidden'), 1800);
+  loadPhotos();
+});
+
+// ── Boot ──────────────────────────────────────
+checkSession();
+sb.auth.onAuthStateChange((_evt, session) => {
+  if (!session) showLogin();
+});
+</script>
+</body>
+</html>
